@@ -25,17 +25,16 @@ class Particle {
     // this.r += this.vr;
 
     var θDistortion = map(
-                          millis() % 5000,
-                          0, 5000,
-                          0, TWO_PI
+                          millis() % 3000,
+                          0, 3000,
+                          0, PI/2 // 0, TWO_PI
                          );
 
     this.vr = cos(θDistortion) * this.base_vr;
+    this.vθ = cos(θDistortion) * this.base_vθ + .01; // 0;
+
     this.r += this.vr;
-
-    console.log(this.r);
-
-    this.θ += this.base_vθ;
+    this.θ += this.vθ;
   }
 
   draw() {
@@ -50,7 +49,7 @@ class Particle {
 var PARTICLE_WIDTH = 30;
 var PARTICLE_R = 100;
 var PARTICLE_VR = 10;
-var PARTICLE_Vθ = 0;
+var PARTICLE_Vθ = .02;
 var TRIGGER_NEW_PARTICLE_DISTANCE = PARTICLE_R + PARTICLE_WIDTH*1.5;
 
 var particleLayers;
@@ -82,8 +81,6 @@ function draw() {
     createParticleLayer();
     newestParticle.marked = true;
   }
-
-
 
   var lastParticle = particleLayers[0][0];
 
