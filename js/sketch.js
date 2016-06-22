@@ -1,20 +1,55 @@
-function setup() {
-  createCanvas(windowWidth, windowHeight);
+class Particle {
+  constructor(width, θ, r, vθ, vr) {
+    this.width = width;
+
+    this.r = r;
+    this.θ = θ;
+
+    this.vθ = vθ || 0;
+    this.vr = vr || 0;
+  }
+
+  get x() {
+    return this.r * cos(this.θ) + width / 2;
+  }
+
+  get y() {
+    return this.r * sin(this.θ) + width / 2;
+  }
+
+  update() {
+    this.r += this.vr;
+    this.θ += this.vθ;
+  }
+
+  draw() {
+    this.update();
+    ellipse(this.x, this.y, this.width, this.width);
+  }
 }
 
-var NUM_VERTICAL = 5;
-var ELLIPSE_WIDTH = 30;
-var ELLIPSE_MARGIN = 20;
-var TOTAL_MS = 3000;
+//------------------------------------------------------------------------------
+
+var PARTICLE_WIDTH = 30;
+var PARTICLE_R = 100;
+
+var particles;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+
+  particles = [];
+
+  for(var θ = 0; θ <TWO_PI; θ += PI/6) {
+    var particle = new Particle(PARTICLE_WIDTH, θ, PARTICLE_R, 1, 1);
+    particles.push(particle);
+  }
+}
+
 
 function draw() {
   clear(); //
-
-  var RADIUS = 100;
-
-  for(var θ = 0; θ <TWO_PI; θ += PI/6) {
-    var x = RADIUS * cos(θ) + width/2;
-    var y = RADIUS * sin(θ) + width/2;
-    ellipse(x, y, ELLIPSE_WIDTH, ELLIPSE_WIDTH);
-  }
+  particles.forEach(function(particle) {
+    particle.draw();
+  })
 }
