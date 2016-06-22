@@ -31,8 +31,8 @@ class Particle {
                          );
 
     this.vr = cos(θDistortion) * this.base_vr;
-    this.vθ = cos(θDistortion) * this.base_vθ + .01; // CHANGE: 0;
-    this.width = cos(θDistortion) * this.baseWidth + 3; // CHANGE: 0;
+    this.vθ = cos(θDistortion) * this.base_vθ + .001; // CHANGE: 0;
+    this.width = /*cos(θDistortion) */this.baseWidth /*+ 3*/; // CHANGE: 0;
 
 
     this.r += this.vr;
