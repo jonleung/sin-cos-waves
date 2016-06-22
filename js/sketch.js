@@ -5,8 +5,12 @@ class Particle {
     this.r = r;
     this.θ = θ;
 
-    this.vθ = vθ || 0;
-    this.vr = vr || 0;
+    this.base_vθ = vθ || 0;
+    this.base_vr = vr || 0;
+
+    this.drawCount = 0;
+
+    this.marked = false;
   }
 
   get x() {
@@ -18,13 +22,26 @@ class Particle {
   }
 
   update() {
+    // this.r += this.vr;
+
+    var θDistortion = map(
+                          millis() % 5000,
+                          0, 5000,
+                          0, TWO_PI
+                         );
+
+    this.vr = cos(θDistortion) * this.base_vr;
     this.r += this.vr;
-    this.θ += this.vθ;
+
+    console.log(this.r);
+
+    this.θ += this.base_vθ;
   }
 
   draw() {
     this.update();
     ellipse(this.x, this.y, this.width, this.width);
+    this.drawCount++;
   }
 }
 
@@ -32,24 +49,59 @@ class Particle {
 
 var PARTICLE_WIDTH = 30;
 var PARTICLE_R = 100;
+var PARTICLE_VR = 10;
+var PARTICLE_Vθ = 0;
+var TRIGGER_NEW_PARTICLE_DISTANCE = PARTICLE_R + PARTICLE_WIDTH*1.5;
 
-var particles;
+var particleLayers;
+
+function createParticleLayer() {
+  var particleLayer = [];
+
+  for(var θ = 0; θ <TWO_PI; θ += PI/6) {
+    var particle = new Particle(PARTICLE_WIDTH, θ, PARTICLE_R, PARTICLE_Vθ, PARTICLE_VR);
+    particleLayer.push(particle);
+  }
+
+  particleLayers.push(particleLayer);
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  particles = [];
-
-  for(var θ = 0; θ <TWO_PI; θ += PI/6) {
-    var particle = new Particle(PARTICLE_WIDTH, θ, PARTICLE_R, 1, 1);
-    particles.push(particle);
-  }
+  particleLayers = [];
+  createParticleLayer();
 }
-
 
 function draw() {
   clear(); //
-  particles.forEach(function(particle) {
-    particle.draw();
-  })
+
+
+  var newestParticle = particleLayers[particleLayers.length-1][0];
+  if (newestParticle.r > TRIGGER_NEW_PARTICLE_DISTANCE && newestParticle.marked === false) {
+    createParticleLayer();
+    newestParticle.marked = true;
+  }
+
+
+
+  var lastParticle = particleLayers[0][0];
+
+  for (var i=0; i<particleLayers.length; i++) {
+    var particleLayer = particleLayers[i];
+
+    for(var j=0; j<particleLayer.length; j++) {
+      var particle = particleLayer[j];
+
+      if (particle !== undefined) {
+        if (particle.x < 0 - PARTICLE_WIDTH || particle.x > width + PARTICLE_WIDTH ||
+            particle.y < 0 - PARTICLE_WIDTH || particle.y > height + PARTICLE_WIDTH) {
+          delete particleLayer[j];
+        }
+        else {
+          particle.draw();
+        }
+      }
+    }
+  }
 }
