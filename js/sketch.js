@@ -1,6 +1,6 @@
 class Particle {
   constructor(width, θ, r, vθ, vr) {
-    this.width = width;
+    this.baseWidth = width;
 
     this.r = r;
     this.θ = θ;
@@ -25,13 +25,15 @@ class Particle {
     // this.r += this.vr;
 
     var θDistortion = map(
-                          millis() % 3000,
-                          0, 3000,
-                          0, PI/2 // 0, TWO_PI
+                          millis() % 6000,
+                          0, 6000,
+                          0, TWO_PI // CHANGE: 0, TWO_PI
                          );
 
     this.vr = cos(θDistortion) * this.base_vr;
-    this.vθ = cos(θDistortion) * this.base_vθ + .01; // 0;
+    this.vθ = cos(θDistortion) * this.base_vθ + .01; // CHANGE: 0;
+    this.width = cos(θDistortion) * this.baseWidth + 3; // CHANGE: 0;
+
 
     this.r += this.vr;
     this.θ += this.vθ;
@@ -46,11 +48,13 @@ class Particle {
 
 //------------------------------------------------------------------------------
 
-var PARTICLE_WIDTH = 30;
-var PARTICLE_R = 100;
+// CHANGE
+
+var PARTICLE_WIDTH = 8;
+var PARTICLE_R = 20;
 var PARTICLE_VR = 10;
 var PARTICLE_Vθ = .02;
-var TRIGGER_NEW_PARTICLE_DISTANCE = PARTICLE_R + PARTICLE_WIDTH*1.5;
+var TRIGGER_NEW_PARTICLE_DISTANCE = PARTICLE_R + PARTICLE_WIDTH*2;
 
 var particleLayers;
 
@@ -77,9 +81,11 @@ function draw() {
 
 
   var newestParticle = particleLayers[particleLayers.length-1][0];
-  if (newestParticle.r > TRIGGER_NEW_PARTICLE_DISTANCE && newestParticle.marked === false) {
+  if (newestParticle === undefined || (newestParticle.r > TRIGGER_NEW_PARTICLE_DISTANCE && newestParticle.marked === false)) {
     createParticleLayer();
-    newestParticle.marked = true;
+    if (newestParticle !== undefined) {
+        newestParticle.marked = true;
+    }
   }
 
   var lastParticle = particleLayers[0][0];
