@@ -27,7 +27,7 @@ class Particle {
     var θDistortion = map(
                           millis() % 6000,
                           0, 6000,
-                          0, TWO_PI // CHANGE: 0, TWO_PI
+                          0, PI/4 // CHANGE: 0, TWO_PI
                          );
 
     this.vr = cos(θDistortion) * this.base_vr;
@@ -52,7 +52,7 @@ class Particle {
 
 var PARTICLE_WIDTH = 8;
 var PARTICLE_R = 20;
-var PARTICLE_VR = 10;
+var PARTICLE_VR = 1;
 var PARTICLE_Vθ = .02;
 var TRIGGER_NEW_PARTICLE_DISTANCE = PARTICLE_R + PARTICLE_WIDTH*2;
 
